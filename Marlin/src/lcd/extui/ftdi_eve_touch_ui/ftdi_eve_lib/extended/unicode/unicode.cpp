@@ -21,7 +21,7 @@
 
 #include "../ftdi_extended.h"
 
-#if BOTH(FTDI_EXTENDED, TOUCH_UI_USE_UTF8)
+#if ALL(FTDI_EXTENDED, TOUCH_UI_USE_UTF8)
 
   using namespace FTDI;
 
@@ -192,9 +192,13 @@
   }
 
   uint16_t FTDI::get_utf8_text_width(FSTR_P fstr, font_size_t fs) {
-    char str[strlen_P(FTOP(fstr)) + 1];
-    strcpy_P(str, FTOP(fstr));
-    return get_utf8_text_width(str, fs);
+    #ifdef __AVR__
+      char str[strlen_P(FTOP(fstr)) + 1];
+      strcpy_P(str, FTOP(fstr));
+      return get_utf8_text_width(str, fs);
+    #else
+      return get_utf8_text_width(FTOP(fstr), fs);
+    #endif
   }
 
    /**

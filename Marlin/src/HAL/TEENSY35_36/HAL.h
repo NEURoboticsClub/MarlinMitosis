@@ -32,7 +32,6 @@
 #include "../shared/HAL_SPI.h"
 
 #include "fastio.h"
-#include "watchdog.h"
 
 #include <stdint.h>
 #include <util/atomic.h>
@@ -107,7 +106,7 @@ typedef int8_t pin_t;
   #define analogInputToDigitalPin(p) ((p < 12U) ? (p) + 54U : -1)
 #endif
 
-#define HAL_ADC_VREF         3.3
+#define HAL_ADC_VREF_MV   3300
 #define HAL_ADC_RESOLUTION  10
 
 //
@@ -118,7 +117,7 @@ typedef int8_t pin_t;
 #define PARSED_PIN_INDEX(code, dval) parser.intval(code, dval)
 
 // ------------------------
-// Class Utilities
+// Free Memory Accessor
 // ------------------------
 
 #pragma GCC diagnostic push
@@ -139,6 +138,10 @@ public:
 
   // Earliest possible init, before setup()
   MarlinHAL() {}
+
+  // Watchdog
+  static void watchdog_init()    IF_DISABLED(USE_WATCHDOG, {});
+  static void watchdog_refresh() IF_DISABLED(USE_WATCHDOG, {});
 
   static void init() {}        // Called early in setup()
   static void init_board() {}  // Called less early in setup()
